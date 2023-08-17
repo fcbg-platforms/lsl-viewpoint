@@ -43,7 +43,7 @@ jobs:
       - name: Run pytest
         run: pytest lsl_viewpoint --cov=lsl_viewpoint --cov-report=xml --cov-config=pyproject.toml
       - name: Upload to codecov
-        if: ${{ matrix.os == 'ubuntu' && matrix.python-version == 3.9 }}
+        if: ${{ matrix.python-version == 3.9 }}
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
