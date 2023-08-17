@@ -14,10 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
         python-version: [3.9, "3.10", "3.11"]
-    name: ${{ matrix.os }} - py${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}-latest
+    name: windows - py${{ matrix.python-version }}
+    runs-on: windows-latest
     defaults:
       run:
         shell: bash
