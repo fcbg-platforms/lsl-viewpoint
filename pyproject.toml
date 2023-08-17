@@ -79,6 +79,9 @@ include-package-data = false
 include = ['lsl_viewpoint*']
 exclude = ['lsl_viewpoint*tests']
 
+[tool.setuptools.package-data]
+"lsl_viewpoint.lib" = ["*.dll"]
+
 [tool.black]
 line-length = 88
 target-version = ['py39']
