@@ -1,0 +1,163 @@
+[build-system]
+requires = ['setuptools >= 61.0.0']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'template'
+version = '0.1.0'
+description = 'Template for python projects.'
+readme = 'README.md'
+license = {file = 'LICENSE'}
+requires-python = '>=3.8'
+authors = [
+    {name = 'Mathieu Scheltienne', email = 'mathieu.scheltienne@fcbg.ch'},
+]
+maintainers = [
+    {name = 'Mathieu Scheltienne', email = 'mathieu.scheltienne@fcbg.ch'},
+]
+keywords = [
+    'python',
+    'template',
+]
+classifiers = [
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: Unix',
+    'Operating System :: MacOS',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Natural Language :: English',
+    'License :: OSI Approved :: MIT License',
+]
+dependencies = [
+    'numpy>=1.21',
+    'packaging',
+    'psutil',
+]
+
+[project.optional-dependencies]
+build = [
+    'build',
+    'twine',
+]
+doc = [
+    'furo',
+    'matplotlib',
+    'memory-profiler',
+    'numpydoc',
+    'sphinx',
+    'sphinxcontrib-bibtex',
+    'sphinx-copybutton',
+    'sphinx-design',
+    'sphinx-gallery',
+    'sphinx-issues',
+]
+style = [
+    'bibclean',
+    'black',
+    'codespell',
+    'isort',
+    'pydocstyle[toml]',
+    'ruff',
+]
+test = [
+    'pytest',
+    'pytest-cov',
+    'pytest-timeout',
+]
+all = [
+    'template[build]',
+    'template[doc]',
+    'template[style]',
+    'template[test]',
+]
+full = [
+    'template[all]',
+]
+
+[project.urls]
+homepage = 'https://github.com/mscheltienne/template-python'
+documentation = 'https://github.com/mscheltienne/template-python'
+source = 'https://github.com/mscheltienne/template-python'
+tracker = 'https://github.com/mscheltienne/template-python/issues'
+
+[project.scripts]
+template-sys_info = 'template.commands.sys_info:run'
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ['template*']
+exclude = ['template*tests']
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+      __pycache__
+    | .github
+    | .ruff_cache
+    | setup.py
+    | doc/
+    | examples/
+    | tutorials/
+)
+'''
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+line_length = 88
+py_version = 39
+extend_skip_glob = [
+    'setup.py',
+    'doc/*',
+    'examples/*',
+    'tutorials/*',
+]
+
+[tool.pydocstyle]
+convention = 'numpy'
+ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
+match = '^(?!setup|__init__|test_).*\.py'
+match-dir = '^template.*'
+add_ignore = 'D100,D104,D107'
+
+[tool.ruff]
+line-length = 88
+extend-exclude = [
+    "doc",
+    "setup.py",
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.pytest.ini_options]
+minversion = '6.0'
+addopts = '--durations 20 --junit-xml=junit-results.xml --verbose'
+filterwarnings = []
+
+[tool.coverage.run]
+branch = true
+cover_pylib = false
+omit = [
+    '**/__init__.py',
+    '**/template/_version.py',
+    '**/template/commands/*',
+    '**/template/utils/_fixes.py',
+    '**/tests/**',
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    'pragma: no cover',
+    'if __name__ == .__main__.:',
+    'if TYPE_CHECKING:',
+]
+precision = 2
