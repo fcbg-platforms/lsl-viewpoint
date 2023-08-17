@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from typing import Optional, Union
 
 
-def load_lib(path: Optional[Union[str, Path]] = None):
+def load_lib(path: Optional[Union[str, Path]] = None) -> CDLL:
     """Load the ViewPoint DLL.
 
     Parameters
