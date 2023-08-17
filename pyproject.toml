@@ -3,12 +3,12 @@ requires = ['setuptools >= 61.0.0']
 build-backend = 'setuptools.build_meta'
 
 [project]
-name = 'template'
+name = 'lsl_viewpoint'
 version = '0.1.0'
-description = 'Template for python projects.'
+description = 'LSL module for the viewpoint eyetracker.'
 readme = 'README.md'
 license = {file = 'LICENSE'}
-requires-python = '>=3.8'
+requires-python = '>=3.9'
 authors = [
     {name = 'Mathieu Scheltienne', email = 'mathieu.scheltienne@fcbg.ch'},
 ]
@@ -17,14 +17,13 @@ maintainers = [
 ]
 keywords = [
     'python',
-    'template',
+    'eye-tracker',
+    'lsl',
+    'labstreaminglayer',
 ]
 classifiers = [
     'Operating System :: Microsoft :: Windows',
-    'Operating System :: Unix',
-    'Operating System :: MacOS',
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
@@ -42,20 +41,7 @@ build = [
     'build',
     'twine',
 ]
-doc = [
-    'furo',
-    'matplotlib',
-    'memory-profiler',
-    'numpydoc',
-    'sphinx',
-    'sphinxcontrib-bibtex',
-    'sphinx-copybutton',
-    'sphinx-design',
-    'sphinx-gallery',
-    'sphinx-issues',
-]
 style = [
-    'bibclean',
     'black',
     'codespell',
     'isort',
@@ -68,30 +54,30 @@ test = [
     'pytest-timeout',
 ]
 all = [
-    'template[build]',
-    'template[doc]',
-    'template[style]',
-    'template[test]',
+    'lsl_viewpoint[build]',
+    'lsl_viewpoint[doc]',
+    'lsl_viewpoint[style]',
+    'lsl_viewpoint[test]',
 ]
 full = [
-    'template[all]',
+    'lsl_viewpoint[all]',
 ]
 
 [project.urls]
-homepage = 'https://github.com/mscheltienne/template-python'
-documentation = 'https://github.com/mscheltienne/template-python'
-source = 'https://github.com/mscheltienne/template-python'
-tracker = 'https://github.com/mscheltienne/template-python/issues'
+homepage = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
+documentation = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
+source = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
+tracker = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint/issues'
 
 [project.scripts]
-template-sys_info = 'template.commands.sys_info:run'
+lsl_viewpoint-sys_info = 'lsl_viewpoint.commands.sys_info:run'
 
 [tool.setuptools]
 include-package-data = false
 
 [tool.setuptools.packages.find]
-include = ['template*']
-exclude = ['template*tests']
+include = ['lsl_viewpoint*']
+exclude = ['lsl_viewpoint*tests']
 
 [tool.black]
 line-length = 88
@@ -103,9 +89,6 @@ extend-exclude = '''
     | .github
     | .ruff_cache
     | setup.py
-    | doc/
-    | examples/
-    | tutorials/
 )
 '''
 
@@ -116,16 +99,13 @@ line_length = 88
 py_version = 39
 extend_skip_glob = [
     'setup.py',
-    'doc/*',
-    'examples/*',
-    'tutorials/*',
 ]
 
 [tool.pydocstyle]
 convention = 'numpy'
 ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
 match = '^(?!setup|__init__|test_).*\.py'
-match-dir = '^template.*'
+match-dir = '^lsl_viewpoint.*'
 add_ignore = 'D100,D104,D107'
 
 [tool.ruff]
@@ -148,9 +128,9 @@ branch = true
 cover_pylib = false
 omit = [
     '**/__init__.py',
-    '**/template/_version.py',
-    '**/template/commands/*',
-    '**/template/utils/_fixes.py',
+    '**/lsl_viewpoint/_version.py',
+    '**/lsl_viewpoint/commands/*',
+    '**/lsl_viewpoint/utils/_fixes.py',
     '**/tests/**',
 ]
 
