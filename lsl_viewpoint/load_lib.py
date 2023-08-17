@@ -1,10 +1,9 @@
-from ctypes import sizeof, c_voidp, CDLL, cdll
+from ctypes import CDLL, c_voidp, cdll, sizeof
 from importlib.resources import files
 from typing import TYPE_CHECKING
 
 from .utils._checks import ensure_path
 from .utils.logs import logger
-
 
 if TYPE_CHECKING:
     from pathlib import Path
