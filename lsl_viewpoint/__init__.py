@@ -41,4 +41,4 @@ def set_lib_path(path):
 
     global _LIB_PATH
     _LIB_PATH = path
-    write_config()
+    write_config(path)

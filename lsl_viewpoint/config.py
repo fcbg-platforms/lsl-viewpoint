@@ -15,5 +15,5 @@ def load_config(fname: Union[str, Path]) -> Optional[str]:
         return None
 
 
-def write_config():
-    pass
+def write_config(path: Union[str, Path]) -> None:
+    path = ensure_path(path, must_exist=True)
