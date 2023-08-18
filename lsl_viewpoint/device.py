@@ -12,9 +12,15 @@ class _RealPoint(Structure):
 
 
 class ViewPointDevice:
-    """ViewPoint device with reference to the shared variables."""
+    """ViewPoint device with reference to the shared variables.
 
-    def __init__(self) -> None:
+    Parameters
+    ----------
+    bufsize : int
+        Number of samples to keep in buffer.
+    """
+
+    def __init__(self, bufsize: int = 16) -> None:
         # gaze points
         self._gaze_point = {"A": _RealPoint(1.0, 1.0), "B": _RealPoint(1.0, 1.0)}
         self._gaze_point_smoothed = {

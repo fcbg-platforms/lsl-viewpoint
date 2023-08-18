@@ -8,7 +8,7 @@ version = '0.1.0'
 description = 'LSL module for the viewpoint eyetracker.'
 readme = 'README.md'
 license = {file = 'LICENSE'}
-requires-python = '>=3.9'
+requires-python = '>=3.8'
 authors = [
     {name = 'Mathieu Scheltienne', email = 'mathieu.scheltienne@fcbg.ch'},
 ]
@@ -24,6 +24,7 @@ keywords = [
 classifiers = [
     'Operating System :: Microsoft :: Windows',
     'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
@@ -78,9 +79,6 @@ include-package-data = false
 [tool.setuptools.packages.find]
 include = ['lsl_viewpoint*']
 exclude = ['lsl_viewpoint*tests']
-
-[tool.setuptools.package-data]
-"lsl_viewpoint.lib" = ["*.dll"]
 
 [tool.black]
 line-length = 88
