@@ -4,13 +4,14 @@ from ctypes import CDLL, CFUNCTYPE, POINTER, c_double, c_int
 from typing import TYPE_CHECKING
 
 import numpy as np
-from bsl.lsl import StreamInfo, StreamOutlet
+from bsl.lsl import StreamInfo, StreamOutlet, local_clock
 from bsl.lsl.constants import fmt2numpy
 
 from . import _LIB_PATH
 from .buffer import Buffer
 from .constants import EYE_A, EYE_B, VPX_DAT_FRESH
 from .device import ViewPointDevice, _RealPoint
+from .utils.logs import logger
 
 if TYPE_CHECKING:
     from typing import Optional
@@ -183,6 +184,7 @@ _OUTLET = StreamOutlet(_SINFO, chunk_size=_BUFFER.bufsize)
 def callback(msg, sub_msg, p1, p2):  # noqa: D401
     """Callback function run when events are received from ViewPoint."""
     if msg == VPX_DAT_FRESH:
+        logger.debug("Fresh data available @ time %.2f (LSL).", local_clock())
         # access data and store it in the shared variables in ViewPointDevice
         get_gaze_point(DEVICE, eye="A", processing=None)
         get_gaze_point(DEVICE, eye="B", processing=None)
@@ -202,6 +204,7 @@ def callback(msg, sub_msg, p1, p2):  # noqa: D401
             ],
             dtype=fmt2numpy[_OUTLET._dtype],
         )
+        logger.debug("%s", data)
         _BUFFER.add_sample(data)
         # push to LSL if we have a full chunk
         if _BUFFER.is_full:
