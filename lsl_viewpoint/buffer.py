@@ -3,10 +3,11 @@ from __future__ import annotations  # post-poned evaluation of annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+
 from .utils._checks import check_type, ensure_int
 
 if TYPE_CHECKING:
-    from typing import List, Union, Tuple
+    from typing import List, Tuple, Union
 
     from numpy.typing import NDArray
 

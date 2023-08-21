@@ -125,7 +125,7 @@ def get_gaze_point(
 def get_gaze_angle(
     device: ViewPointDevice, eye: str, processing: Optional[str]
 ) -> None:
-    """Retrive the gaze angle for one eye.
+    """Retrieve the gaze angle for one eye.
 
     Parameters
     ----------
