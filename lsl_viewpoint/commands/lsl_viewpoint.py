@@ -16,3 +16,6 @@ def run():
 
     # the import starts the callback loop
     from ..callback import VPX  # noqa: F401
+
+    # interrupt with a keyboard input
+    input(">>> Press any key to interrupt.")
