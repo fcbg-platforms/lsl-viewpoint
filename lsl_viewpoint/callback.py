@@ -3,7 +3,11 @@ from __future__ import annotations  # post-poned evaluation of annotations
 from ctypes import CDLL, CFUNCTYPE, POINTER, c_double, c_int
 from typing import TYPE_CHECKING
 
+import numpy as np
+from bsl.lsl import StreamInfo, StreamOutlet
+
 from . import _LIB_PATH
+from .buffer import Buffer
 from .constants import EYE_A, EYE_B, VPX_DAT_FRESH
 from .device import ViewPointDevice, _RealPoint
 
@@ -149,14 +153,59 @@ def get_gaze_angle(
     accessor(eye_idx, variable[eye])
 
 
+# -- buffer ----------------------------------------------------------------------------
+_CH_NAMES = [
+    "gaze_point_raw_A_x",
+    "gaze_point_raw_A_y",
+    "gaze_point_raw_B_x",
+    "gaze_point_raw_B_y",
+    "gaze_angle_raw_A_x",
+    "gaze_angle_raw_A_y",
+    "gaze_angle_raw_B_x",
+    "gaze_angle_raw_B_y",
+]
+_BUFFER = Buffer(_CH_NAMES, bufsize=32)
+
+# -- LSL Stream ------------------------------------------------------------------------
+_SINFO = StreamInfo(
+    "ViewPoint",
+    "Gaze",
+    _BUFFER.n_channels,
+    sfreq=220,
+    dtype="float64",
+    source_id="ViewPoint",
+)
+_OUTLET = StreamOutlet(_SINFO, chunk_size=_BUFFER.bufsize)
+
+
 # -- callback --------------------------------------------------------------------------
 def callback(msg, sub_msg, p1, p2):  # noqa: D401
     """Callback function run when events are received from ViewPoint."""
     if msg == VPX_DAT_FRESH:
+        # access data and store it in the shared variables in ViewPointDevice
         get_gaze_point(DEVICE, eye="A", processing=None)
         get_gaze_point(DEVICE, eye="B", processing=None)
         get_gaze_angle(DEVICE, eye="A", processing=None)
         get_gaze_angle(DEVICE, eye="B", processing=None)
+        # transfer the selection of data into the buffer
+        data = np.array(
+            [
+                DEVICE.gaze_point["A"].x,
+                DEVICE.gaze_point["A"].y,
+                DEVICE.gaze_point["B"].x,
+                DEVICE.gaze_point["B"].y,
+                DEVICE.gaze_angle["A"].x,
+                DEVICE.gaze_angle["A"].y,
+                DEVICE.gaze_angle["B"].x,
+                DEVICE.gaze_angle["B"].y,
+            ],
+            dtype=np.float64,
+        )
+        _BUFFER.add_sample(data)
+        # push to LSL if we have a full chunk
+        if _BUFFER.is_full:
+            _OUTLET.push_chunk(_BUFFER.buffer)
+            _BUFFER.reset()
     return 0  # exit code
 
 
