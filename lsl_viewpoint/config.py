@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .utils._checks import ensure_path
-from .utils._logs import logger
+from .utils.logs import logger
 
 if TYPE_CHECKING:
     from typing import Optional, Union
