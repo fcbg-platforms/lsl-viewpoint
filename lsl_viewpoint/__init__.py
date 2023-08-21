@@ -17,7 +17,7 @@ def set_lib_path(path):
     Parameters
     ----------
     path : path-like | None
-        Path to the 'VPX_InterApp_64.dll' to load.
+        Path to the 'VPX_InterApp_64.dll' library to load.
     """
     from ctypes import cdll
 
