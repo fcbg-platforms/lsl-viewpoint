@@ -1,3 +1,5 @@
+from __future__ import annotations  # post-poned evaluation of annotations
+
 from ctypes import Structure, c_double, c_float
 from typing import TYPE_CHECKING
 
