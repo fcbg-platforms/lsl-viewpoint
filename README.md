@@ -26,7 +26,7 @@ one in use by the ViewPoint application. Both configuration variables can be set
 ```
 from lsl_viewpoint import set_config
 
-path = "C:/Applications/Arrington/..."
+path = "C:/Applications/Arrington/VPX_InterApp_64.dll"
 sfreq = 220
 set_config(path, sfreq)
 ```
