@@ -25,6 +25,10 @@ def load_lib() -> CDLL:
     vpx : CDLL
         The loaded library.
     """
+    if _LIB_PATH is None:
+        raise RuntimeError(
+            "The path to the DLL is unknown. Please use lsl_viewpoint.set_lib_path()."
+        )
     try:
         vpx = CDLL(_LIB_PATH)
     except Exception:

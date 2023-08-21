@@ -8,7 +8,7 @@ from .utils.logs import add_file_handler, logger, set_log_level  # noqa: F401
 _LIB_PATH = load_config()
 
 if not sizeof(c_voidp) == 8:
-    raise RuntimeError("This package is for x64 system only.")
+    raise RuntimeError("This package is for x64 windows system only.")
 
 
 def set_lib_path(path):
