@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from bsl.lsl import StreamInfo, StreamOutlet
+from bsl.lsl.constants import fmt2numpy
 
 from . import _LIB_PATH
 from .buffer import Buffer
@@ -199,7 +200,7 @@ def callback(msg, sub_msg, p1, p2):  # noqa: D401
                 DEVICE.gaze_angle["B"].x,
                 DEVICE.gaze_angle["B"].y,
             ],
-            dtype=np.float64,
+            dtype=fmt2numpy[_OUTLET._dtype],
         )
         _BUFFER.add_sample(data)
         # push to LSL if we have a full chunk

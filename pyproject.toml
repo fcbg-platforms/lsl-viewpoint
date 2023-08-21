@@ -32,6 +32,7 @@ classifiers = [
     'License :: OSI Approved :: MIT License',
 ]
 dependencies = [
+    'bsl==0.6.1',
     'numpy>=1.21',
     'packaging',
     'psutil',
