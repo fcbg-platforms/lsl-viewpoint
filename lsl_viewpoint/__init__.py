@@ -5,24 +5,27 @@ from .config import load_config, write_config
 from .utils.config import sys_info  # noqa: F401
 from .utils.logs import add_file_handler, logger, set_log_level  # noqa: F401
 
-_LIB_PATH = load_config()
+_LIB_PATH, _SAMPLING_RATE = load_config()
 
 if not sizeof(c_voidp) == 8:
     raise RuntimeError("This package is for x64 windows system only.")
 
 
-def set_lib_path(path):
-    """Set the path to the ViewPoint library."
+def set_config(path, sfreq):
+    """Set the path to the ViewPoint library and the sampling rate."
 
     Parameters
     ----------
-    path : path-like | None
+    path : path-like
         Path to the 'VPX_InterApp_64.dll' library to load.
+    sfreq : float
+        Sampling rate in Hz.
     """
     from ctypes import cdll
 
-    from .utils._checks import ensure_path
+    from .utils._checks import check_type, ensure_path
 
+    check_type(sfreq, ("numeric",), "sfreq")
     path = ensure_path(path, must_exist=True)
     if path.name != "VPX_InterApp_64.dll":
         logger.warning(
@@ -41,4 +44,6 @@ def set_lib_path(path):
 
     global _LIB_PATH
     _LIB_PATH = path
-    write_config(path)
+    global _SAMPLING_RATE
+    _SAMPLING_RATE = float(sfreq)
+    write_config(_LIB_PATH, _SAMPLING_RATE)

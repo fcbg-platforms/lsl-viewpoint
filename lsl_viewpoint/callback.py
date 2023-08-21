@@ -7,7 +7,7 @@ import numpy as np
 from bsl.lsl import StreamInfo, StreamOutlet, local_clock
 from bsl.lsl.constants import fmt2numpy
 
-from . import _LIB_PATH
+from . import _LIB_PATH, _SAMPLING_RATE
 from .buffer import Buffer
 from .constants import EYE_A, EYE_B, VPX_DAT_FRESH
 from .device import ViewPointDevice, _RealPoint
@@ -23,6 +23,13 @@ _func_real_point2 = CFUNCTYPE(c_int, c_int, POINTER(_RealPoint))
 _callback = CFUNCTYPE(c_int, c_int, c_int, c_int, c_int)
 
 
+if _LIB_PATH is None or _SAMPLING_RATE is None:
+    raise RuntimeError(
+        "The path to the DLL or the sampling rate is unknown. Please use "
+        "lsl_viewpoint.set_config()."
+    )
+
+
 def load_lib() -> CDLL:
     """Load the ViewPoint DLL.
 
@@ -31,10 +38,6 @@ def load_lib() -> CDLL:
     vpx : CDLL
         The loaded library.
     """
-    if _LIB_PATH is None:
-        raise RuntimeError(
-            "The path to the DLL is unknown. Please use lsl_viewpoint.set_lib_path()."
-        )
     try:
         vpx = CDLL(_LIB_PATH)
     except Exception:
@@ -173,7 +176,7 @@ _SINFO = StreamInfo(
     "ViewPoint",
     "Gaze",
     _BUFFER.n_channels,
-    sfreq=220,
+    sfreq=_SAMPLING_RATE,
     dtype="float64",
     source_id="ViewPoint",
 )
