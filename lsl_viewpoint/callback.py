@@ -214,4 +214,5 @@ def callback(msg, sub_msg, p1, p2):  # noqa: D401
 
 
 # register the python callback function with the viewpoint DLL
-VPX.VPX_InsertCallback(_callback(callback))
+_vpx_callback = _callback(callback)
+VPX.VPX_InsertCallback(_vpx_callback)
