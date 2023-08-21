@@ -73,6 +73,7 @@ tracker = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint/issues'
 
 [project.scripts]
 lsl_viewpoint-sys_info = 'lsl_viewpoint.commands.sys_info:run'
+lsl_viewpoint = 'lsl_viewpoint.commands.lsl_viewpoint:run'
 
 [tool.setuptools]
 include-package-data = false
