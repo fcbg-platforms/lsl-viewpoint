@@ -5,4 +5,41 @@
 
 # LSL ViewPoint
 
-LSL module for the viewpoint eye-tracker system.
+LSL application for the viewpoint eye-tracker system.
+Designed for x64 bits windows systems only.
+
+## Installation
+
+This LSL application is a python package. It can be installed with `pip` from source:
+
+```
+pip install git+https://github.com/fcbg-hnp-meeg/lsl-viewpoint
+```
+
+## Configuration
+
+This LSL application requires 2 configuration variables: the path to
+`VPX_InterApp_64.dll` and the set sampling rate. The `VPX_InterApp_64.dll` should be the
+one in use by the ViewPoint application. Both configuration variables can be set with
+`lsl_viewpoint.set_config`:
+
+```
+from lsl_viewpoint import set_config
+
+path = "C:/Applications/Arrington/..."
+sfreq = 220
+set_config(path, sfreq)
+```
+
+The configuration variables are saved in a file `~/.lsl-viewpoint`.
+
+## Streaming data to LSL
+
+The stream of data starts as soon as the module `lsl_viewpoint.callback` is imported.
+Thus `from lsl_viewpoint.callback import VPX` will start the streaming. It is not
+recommended to ever import the `callback` module. Instead, the entry-point
+`lsl_viewpoint` should be called in a terminal:
+
+```
+lsl_viewpoint --help
+```
