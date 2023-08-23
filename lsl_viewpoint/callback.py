@@ -3,7 +3,7 @@ from __future__ import annotations  # post-poned evaluation of annotations
 from ctypes import CDLL, CFUNCTYPE, POINTER, c_bool, c_double, c_int, c_void_p
 
 import numpy as np
-from bsl.lsl import StreamInfo, StreamOutlet, local_clock
+from bsl.lsl import StreamOutlet, local_clock
 from bsl.lsl.constants import fmt2numpy
 
 from . import _LIB_PATH, _SAMPLING_RATE
@@ -17,6 +17,7 @@ from .device import (
     _VPX_DataQuality,
     _VPX_EyeType,
 )
+from .lsl import StreamInfo
 from .utils.logs import logger
 
 _func_double_value = CFUNCTYPE(c_int, POINTER(c_double))
@@ -223,6 +224,7 @@ _SINFO_A = StreamInfo(
     dtype="float64",
     source_id="ViewPoint",
 )
+_SINFO_A.set_channel_names(_CH_NAMES + _CH_NAMES_BINOCULAR)
 _SINFO_B = StreamInfo(
     "ViewPoint-B",
     "Gaze",
@@ -231,6 +233,7 @@ _SINFO_B = StreamInfo(
     dtype="float64",
     source_id="ViewPoint",
 )
+_SINFO_B.set_channel_names(_CH_NAMES)
 _OUTLETS = {
     "A": StreamOutlet(_SINFO_A, chunk_size=1),
     "B": StreamOutlet(_SINFO_B, chunk_size=1),
