@@ -101,229 +101,140 @@ vpx_get_store_delta_time = _func_double_value2(VPX.VPX_GetStoreDeltaTime2)
 # -- device to store shared variables --------------------------------------------------
 DEVICE = ViewPointDevice()
 
+# -- mapping accessors/variables -------------------------------------------------------
+_ACCESSOR_VARIABLES = {
+    # -- gaze point/angle --------------------------------------------------------------
+    "gaze_point_raw": (vpx_get_gaze_point, DEVICE.gaze_point),
+    "gaze_point_smoothed": (vpx_get_gaze_point_smoothed, DEVICE.gaze_point_smoothed),
+    "gaze_point_corrected": (vpx_get_gaze_point_corrected, DEVICE.gaze_point_corrected),
+    "gaze_binocular_point": (vpx_get_gaze_binocular, DEVICE.gaze_point_binocular),
+    "gaze_angle_raw": (vpx_get_gaze_angle, DEVICE.gaze_angle),
+    "gaze_angle_smoothed": (vpx_get_gaze_angle_smoothed, DEVICE.gaze_angle_smoothed),
+    "gaze_angle_corrected": (vpx_get_gaze_angle_corrected, DEVICE.gaze_angle_corrected),
+    # -- gaze velocity -----------------------------------------------------------------
+    "gaze_total_velocity": (vpx_get_total_velocity, DEVICE.total_velocity),
+    "gaze_component_velocity": (vpx_get_component_velocity, DEVICE.component_velocity),
+    "gaze_binocular_velocity": (vpx_get_velocity_binocular, DEVICE.velocity_binocular),
+    # -- pupil -------------------------------------------------------------------------
+    "pupil_size": (vpx_get_pupil_size, DEVICE.pupil_size),
+    "pupil_aspect_ratio": (vpx_get_pupil_aspect_ratio, DEVICE.pupil_aspect_ratio),
+    "pupil_oval_rect": (vpx_get_pupil_oval_rect, DEVICE.pupil_oval_rect),
+    "pupil_angle": (vpx_get_pupil_angle, DEVICE.pupil_angle),
+    "pupil_diameter": (vpx_get_pupil_diameter, DEVICE.pupil_diameter),
+    "pupil_point": (vpx_get_pupil_point, DEVICE.pupil_point),
+    "pupil_centroid": (vpx_get_pupil_centroid, DEVICE.pupil_centroid),
+    # -- glint -------------------------------------------------------------------------
+    "glint_diff_vector": (vpx_get_diff_vector, DEVICE.diff_vector),
+    "glint_point": (vpx_get_glint_point, DEVICE.glint_point),
+    "glint_centroid": (vpx_get_glint_centroid, DEVICE.glint_centroid),
+    # -- data quality ------------------------------------------------------------------
+    "data_quality": (vpx_get_data_quality, DEVICE.data_quality),
+    # -- timestamps --------------------------------------------------------------------
+    "data_time": (vpx_get_data_time, DEVICE.data_time),
+    "data_delta_time": (vpx_get_data_delta_time, DEVICE.data_delta_time),
+    "store_time": (vpx_get_store_time, DEVICE.store_time),
+    "store_delta_time": (vpx_get_store_delta_time, DEVICE.store_delta_time),
+}
+
 
 # -- functions -------------------------------------------------------------------------
-def get_gaze_point(device: ViewPointDevice, eye: str, processing: str) -> None:
-    """Retrieve the gaze point for one or both eyes.
+def get_property(name: str, eye: str) -> None:
+    """Retrieve a property for the given eye.
 
     Parameters
     ----------
-    device : ViewPointDevice
-        Class to store the shared variables updated.
-    eye : 'A' | 'B' | 'AB'
-        Eye selection. Use 'AB' for binocular selection.
-    processing : 'raw' | 'smoothed' | 'corrected'
-        Processing flag applied to the gaze point. Disabled for binocular selection.
+    name : str
+        Name of the property to retrieve.
+    eye : 'A' | 'B'
+        Eye selection. Ignored if the property is binocular.
     """
-    assert eye in ("A", "B", "AB"), "The eye selection should be 'A', 'B' or 'AB'."
-    if eye == "AB":
-        vpx_get_gaze_binocular(device.gaze_point_binocular)
+    accessor, variable = _ACCESSOR_VARIABLES.get(name, (None, None))
+    if accessor is None:
+        raise ValueError(f"The property name '{name}' is invalid.")
+
+    if "binocular" in name:
+        accessor(variable)
     else:
-        accessors_variables = {
-            "raw": (vpx_get_gaze_point, device.gaze_point),
-            "smoothed": (vpx_get_gaze_point_smoothed, device.gaze_point_smoothed),
-            "corrected": (vpx_get_gaze_point_corrected, device.gaze_point_corrected),
-        }
-        accessor, variable = accessors_variables.get(processing, (None, None))
-        if accessor is None:
-            raise ValueError(
-                "Argument 'processing' should be 'raw', 'smoothed' or 'corrected'. "
-                f"'{processing}' is invalid."
-            )
+        assert eye in ("A", "B"), "The eye selection should be 'A' or 'B'."
         eye_idx = EYE_A if eye == "A" else EYE_B  # 0 for A, 1 for B
         accessor(eye_idx, variable[eye])
-
-
-def get_gaze_angle(device: ViewPointDevice, eye: str, processing: str) -> None:
-    """Retrieve the gaze angle for one eye.
-
-    Parameters
-    ----------
-    eye : 'A' | 'B'
-        Eye selection.
-    processing : 'raw' | 'smoothed' | 'corrected'
-        Processing flag applied to the gaze angle. Disabled for binocular selection.
-    """
-    assert eye in ("A", "B"), "The eye selection should be 'A' or 'B'."
-    accessors_variables = {
-        "raw": (vpx_get_gaze_angle, device.gaze_angle),
-        "smoothed": (vpx_get_gaze_angle_smoothed, device.gaze_angle_smoothed),
-        "corrected": (vpx_get_gaze_angle_corrected, device.gaze_angle_corrected),
-    }
-    accessor, variable = accessors_variables.get(processing, (None, None))
-    if accessor is None:
-        raise ValueError(
-            "Argument 'processing' should be 'raw', 'smoothed' or 'corrected'. "
-            f"'{processing}' is invalid."
-        )
-    eye_idx = EYE_A if eye == "A" else EYE_B  # 0 for A, 1 for B
-    accessor(eye_idx, variable[eye])
-
-
-def get_gaze_velocity(device: ViewPointDevice, eye: str, property_name: str) -> None:
-    """Retrieve the gaze velocity for one of both eyes.
-
-    Parameters
-    ----------
-    device : ViewPointDevice
-        Class to store the shared variables updated.
-    eye : 'A' | 'B' | 'AB'
-        Eye selection. Use 'AB' for binocular selection.
-    property_name : 'total' | 'component'
-        Type of velocity to retrieve, 'total' or 'component'. Disabled for binocular
-        selection.
-    """
-    assert eye in ("A", "B", "AB"), "The eye selection should be 'A', 'B' or 'AB'."
-    if eye == "AB":
-        vpx_get_velocity_binocular(device.velocity_binocular)
-    else:
-        accessors_variables = {
-            "total": (vpx_get_total_velocity, device.total_velocity),
-            "component": (vpx_get_component_velocity, device.component_velocity),
-        }
-        accessor, variable = accessors_variables.get(property_name, (None, None))
-        if accessor is None:
-            raise ValueError(
-                "Argument 'property_name' should be 'total' or 'component'. "
-                f"'{property_name}' is invalid."
-            )
-        eye_idx = EYE_A if eye == "A" else EYE_B  # 0 for A, 1 for B
-        accessor(eye_idx, variable[eye])
-
-
-def get_pupil_property(device: ViewPointDevice, eye: str, property_name: str):
-    """Retrieve a property of the pupil.
-
-    Parameters
-    ----------
-    device : ViewPointDevice
-        Class to store the shared variables updated.
-    eye : 'A' | 'B'
-        Eye selection.
-    property_name : str
-        Name of the property to retrieve. Can be one of: 'size', 'aspect_ratio',
-        'oval_rect', 'angle', 'diameter', 'point', 'centroid'.
-    """
-    assert eye in ("A", "B"), "The eye selection should be 'A' or 'B'."
-    accessors_variables = {
-        "size": (vpx_get_pupil_size, device.pupil_size),
-        "aspect_ratio": (vpx_get_pupil_aspect_ratio, device.pupil_aspect_ratio),
-        "oval_rect": (vpx_get_pupil_oval_rect, device.pupil_oval_rect),
-        "angle": (vpx_get_pupil_angle, device.pupil_angle),
-        "diameter": (vpx_get_pupil_diameter, device.pupil_diameter),
-        "point": (vpx_get_pupil_point, device.pupil_point),
-        "centroid": (vpx_get_pupil_centroid, device.pupil_centroid),
-    }
-    accessor, variable = accessors_variables.get(property_name, (None, None))
-    if accessor is None:
-        raise ValueError(
-            "Argument 'property_name' should be one of 'size', 'aspect_ratio', "
-            f"'oval_rect', 'angle', 'diameter', 'point', 'centroid'. '{property_name}' "
-            "is invalid."
-        )
-    eye_idx = EYE_A if eye == "A" else EYE_B  # 0 for A, 1 for B
-    accessor(eye_idx, variable[eye])
 
 
 # -- channel names ---------------------------------------------------------------------
+# binocular channels are updated on A-events
 _CH_NAMES = [
-    # -- gaze raw ----------------------------------------------------------------------
-    "gaze_point_raw_A_x",
-    "gaze_point_raw_A_y",
-    "gaze_point_raw_B_x",
-    "gaze_point_raw_B_y",
-    "gaze_angle_raw_A_x",
-    "gaze_angle_raw_A_y",
-    "gaze_angle_raw_B_x",
-    "gaze_angle_raw_B_y",
-    # -- gaze smoothed -----------------------------------------------------------------
-    "gaze_point_smoothed_A_x",
-    "gaze_point_smoothed_A_y",
-    "gaze_point_smoothed_B_x",
-    "gaze_point_smoothed_B_y",
-    "gaze_angle_smoothed_A_x",
-    "gaze_angle_smoothed_A_y",
-    "gaze_angle_smoothed_B_x",
-    "gaze_angle_smoothed_B_y",
-    # -- gaze corrected ----------------------------------------------------------------
-    "gaze_point_corrected_A_x",
-    "gaze_point_corrected_A_y",
-    "gaze_point_corrected_B_x",
-    "gaze_point_corrected_B_y",
-    "gaze_angle_corrected_A_x",
-    "gaze_angle_corrected_A_y",
-    "gaze_angle_corrected_B_x",
-    "gaze_angle_corrected_B_y",
+    # -- gaze point/angle --------------------------------------------------------------
+    "gaze_point_raw_x",
+    "gaze_point_raw_y",
+    "gaze_point_smoothed_x",
+    "gaze_point_smoothed_y",
+    "gaze_point_corrected_x",
+    "gaze_point_corrected_y",
+    "gaze_angle_raw_x",
+    "gaze_angle_raw_y",
+    "gaze_angle_smoothed_x",
+    "gaze_angle_smoothed_y",
+    "gaze_angle_corrected_x",
+    "gaze_angle_corrected_y",
+    # -- velocity ----------------------------------------------------------------------
+    "total_velocity",
+    "component_velocity_x",
+    "component_velocity_y",
+    # -- pupil -------------------------------------------------------------------------
+    "pupil_size_x",
+    "pupil_size_y",
+    "pupil_aspect_ratio",
+    "pupil_angle",
+    "pupil_diameter",
+    "pupil_point_x",
+    "pupil_point_y",
+    "pupil_centroid_x",
+    "pupil_centroid_y",
+    # -- glint -------------------------------------------------------------------------
+    "glint_diff_vector_x",
+    "glint_diff_vector_y",
+    "glint_point_x",
+    "glint_point_y",
+    "glint_centroid_x",
+    "glint_centroid_y",
+    # -- data quality ------------------------------------------------------------------
+    "data_quality",
+    # -- timestamps --------------------------------------------------------------------
+    "data_time",
+    "data_delta_time",
+    "store_time",
+    "store_delta_time",
+]
+_CH_NAMES_BINOCULAR = [
     # -- gaze binocular ----------------------------------------------------------------
     "gaze_point_binocular_x",
     "gaze_point_binocular_y",
-    # -- velocity ----------------------------------------------------------------------
-    "total_velocity_A",
-    "total_velocity_B",
-    "component_velocity_A_x",
-    "component_velocity_A_y",
-    "component_velocity_B_x",
-    "component_velocity_B_y",
+    # -- velocity binocular ------------------------------------------------------------
     "velocity_binocular",
-    # -- pupil -------------------------------------------------------------------------
-    "pupil_size_A_x",
-    "pupil_size_A_y",
-    "pupil_size_B_x",
-    "pupil_size_B_y",
-    "pupil_aspect_ratio_A",
-    "pupil_aspect_ratio_B",
-    "pupil_angle_A",
-    "pupil_angle_B",
-    "pupil_diameter_A",
-    "pupil_diameter_B",
-    "pupil_point_A_x",
-    "pupil_point_A_y",
-    "pupil_point_B_x",
-    "pupil_point_B_y",
-    "pupil_centroid_A_x",
-    "pupil_centroid_A_y",
-    "pupil_centroid_B_x",
-    "pupil_centroid_B_y",
-    # -- glint -------------------------------------------------------------------------
-    "diff_vector_A_x",
-    "diff_vector_A_y",
-    "diff_vector_B_x",
-    "diff_vector_B_y",
-    "glint_point_A_x",
-    "glint_point_A_y",
-    "glint_point_B_x",
-    "glint_point_B_y",
-    "glint_centroid_A_x",
-    "glint_centroid_A_y",
-    "glint_centroid_B_x",
-    "glint_centroid_B_y",
-    # -- data quality ------------------------------------------------------------------
-    "data_quality_A",
-    "data_quality_B",
-    # -- timestamps --------------------------------------------------------------------
-    "data_time_A",
-    "data_time_B",
-    "data_delta_time_A",
-    "data_delta_time_B",
-    "store_time_A",
-    "store_time_B",
-    "store_delta_time_A",
-    "store_delta_time_B",
-    # -- temp --------------------------------------------------------------------------
-    "current_time"
 ]
 
+
 # -- LSL Stream ------------------------------------------------------------------------
-_SINFO = StreamInfo(
-    "ViewPoint",
+_SINFO_A = StreamInfo(
+    "ViewPoint-A",
+    "Gaze",
+    len(_CH_NAMES + _CH_NAMES_BINOCULAR),
+    sfreq=_SAMPLING_RATE,
+    dtype="float64",
+    source_id="ViewPoint",
+)
+_SINFO_B = StreamInfo(
+    "ViewPoint-B",
     "Gaze",
     len(_CH_NAMES),
     sfreq=_SAMPLING_RATE,
     dtype="float64",
     source_id="ViewPoint",
 )
-_OUTLET = StreamOutlet(_SINFO, chunk_size=1)
-
+_OUTLETS = {
+    "A": StreamOutlet(_SINFO_A, chunk_size=1),
+    "B": StreamOutlet(_SINFO_B, chunk_size=1),
+}
 
 # -- callback --------------------------------------------------------------------------
 _callback = CFUNCTYPE(c_int, c_int, c_int, c_int, c_int)
@@ -331,162 +242,111 @@ _callback = CFUNCTYPE(c_int, c_int, c_int, c_int, c_int)
 
 def callback(msg, sub_msg, p1, p2):  # noqa: D401
     """Callback function run when events are received from ViewPoint."""
-    if msg == VPX_DAT_FRESH and sub_msg == EYE_A.value:
-        now = local_clock()
-        logger.debug("Fresh data available @ time %.2f (LSL).", now)
-        # access data and store it in the shared variables in ViewPointDevice
-        # -- gaze raw ------------------------------------------------------------------
-        get_gaze_point(DEVICE, eye="A", processing="raw")
-        get_gaze_point(DEVICE, eye="B", processing="raw")
-        get_gaze_angle(DEVICE, eye="A", processing="raw")
-        get_gaze_angle(DEVICE, eye="B", processing="raw")
-        # -- gaze smoothed -------------------------------------------------------------
-        get_gaze_point(DEVICE, eye="A", processing="smoothed")
-        get_gaze_point(DEVICE, eye="B", processing="smoothed")
-        get_gaze_angle(DEVICE, eye="A", processing="smoothed")
-        get_gaze_angle(DEVICE, eye="B", processing="smoothed")
-        # -- gaze corrected ------------------------------------------------------------
-        get_gaze_point(DEVICE, eye="A", processing="corrected")
-        get_gaze_point(DEVICE, eye="B", processing="corrected")
-        get_gaze_angle(DEVICE, eye="A", processing="corrected")
-        get_gaze_angle(DEVICE, eye="B", processing="corrected")
-        # -- gaze binocular ------------------------------------------------------------
-        get_gaze_point(DEVICE, eye="AB", processing=None)
+    if msg != VPX_DAT_FRESH:
+        return 0  # exit early
+
+    if sub_msg == EYE_A.value:
+        eye = "A"
+    elif sub_msg == EYE_B.value:
+        eye = "B"
+    else:
+        logger.debug("Sub-message different from EYE_A or EYE_B received: %s", sub_msg)
+        return 0  # exit early
+
+    # -- gaze point/angle --------------------------------------------------------------
+    get_property("gaze_point_raw", eye)
+    get_property("gaze_point_smoothed", eye)
+    get_property("gaze_point_corrected", eye)
+    get_property("gaze_angle_raw", eye)
+    get_property("gaze_angle_smoothed", eye)
+    get_property("gaze_angle_corrected", eye)
+    # -- gaze velocity -----------------------------------------------------------------
+    get_property("gaze_total_velocity", eye)
+    get_property("gaze_component_velocity", eye)
+    # -- pupil -------------------------------------------------------------------------
+    get_property("pupil_size", eye)
+    get_property("pupil_aspect_ratio", eye)
+    get_property("pupil_angle", eye)
+    get_property("pupil_diameter", eye)
+    get_property("pupil_point", eye)
+    get_property("pupil_centroid", eye)
+    # -- glint -------------------------------------------------------------------------
+    get_property("glint_diff_vector", eye)
+    get_property("glint_point", eye)
+    get_property("glint_centroid", eye)
+    # -- data quality ------------------------------------------------------------------
+    get_property("data_quality", eye)
+    # -- timestamps --------------------------------------------------------------------
+    get_property("data_time", eye)
+    get_property("data_delta_time", eye)
+    get_property("store_time", eye)
+    get_property("store_delta_time", eye)
+
+    # -- binocular ---------------------------------------------------------------------
+    if eye == "A":
+        get_property("gaze_binocular_point", eye)
+        get_property("gaze_binocular_velocity", eye)
+
+    # figure out the corresponding LSL timestamp
+    current_lsl_time = local_clock()
+    current_vpx_time = VPX.VPX_GetPrecisionDeltaTime(None, c_int(0))
+    acquisition_time = DEVICE.data_time[eye].value
+    delay = current_vpx_time - acquisition_time
+    timestamp = current_lsl_time - delay
+
+    # format the data selection into a numpy array
+    data = [
+        # -- gaze point/angle ----------------------------------------------------------
+        DEVICE.gaze_point[eye].x,
+        DEVICE.gaze_point[eye].y,
+        DEVICE.gaze_point_smoothed[eye].x,
+        DEVICE.gaze_point_smoothed[eye].y,
+        DEVICE.gaze_point_corrected[eye].x,
+        DEVICE.gaze_point_corrected[eye].y,
+        DEVICE.gaze_angle[eye].x,
+        DEVICE.gaze_angle[eye].y,
+        DEVICE.gaze_angle_smoothed[eye].x,
+        DEVICE.gaze_angle_smoothed[eye].y,
+        DEVICE.gaze_angle_corrected[eye].x,
+        DEVICE.gaze_angle_corrected[eye].y,
         # -- velocity ------------------------------------------------------------------
-        get_gaze_velocity(DEVICE, eye="A", property_name="total")
-        get_gaze_velocity(DEVICE, eye="B", property_name="total")
-        get_gaze_velocity(DEVICE, eye="A", property_name="component")
-        get_gaze_velocity(DEVICE, eye="B", property_name="component")
-        get_gaze_velocity(DEVICE, eye="AB", property_name="")
+        DEVICE.total_velocity[eye].value,
+        DEVICE.component_velocity[eye].x,
+        DEVICE.component_velocity[eye].y,
         # -- pupil ---------------------------------------------------------------------
-        get_pupil_property(DEVICE, eye="A", property_name="size")
-        get_pupil_property(DEVICE, eye="B", property_name="size")
-        get_pupil_property(DEVICE, eye="A", property_name="aspect_ratio")
-        get_pupil_property(DEVICE, eye="B", property_name="aspect_ratio")
-        get_pupil_property(DEVICE, eye="A", property_name="angle")
-        get_pupil_property(DEVICE, eye="B", property_name="angle")
-        get_pupil_property(DEVICE, eye="A", property_name="diameter")
-        get_pupil_property(DEVICE, eye="B", property_name="diameter")
-        get_pupil_property(DEVICE, eye="A", property_name="point")
-        get_pupil_property(DEVICE, eye="B", property_name="point")
-        get_pupil_property(DEVICE, eye="A", property_name="centroid")
-        get_pupil_property(DEVICE, eye="B", property_name="centroid")
+        DEVICE.pupil_size[eye].x,
+        DEVICE.pupil_size[eye].y,
+        DEVICE.pupil_aspect_ratio[eye].value,
+        DEVICE.pupil_angle[eye].value,
+        DEVICE.pupil_diameter[eye].value,
+        DEVICE.pupil_point[eye].x,
+        DEVICE.pupil_point[eye].y,
+        DEVICE.pupil_centroid[eye].x,
+        DEVICE.pupil_centroid[eye].y,
         # -- glint ---------------------------------------------------------------------
-        vpx_get_diff_vector(EYE_A, DEVICE.diff_vector["A"])
-        vpx_get_diff_vector(EYE_B, DEVICE.diff_vector["B"])
-        vpx_get_glint_point(EYE_A, DEVICE.glint_point["A"])
-        vpx_get_glint_point(EYE_B, DEVICE.glint_point["B"])
-        vpx_get_glint_centroid(EYE_A, DEVICE.glint_centroid["A"])
-        vpx_get_glint_centroid(EYE_B, DEVICE.glint_centroid["B"])
+        DEVICE.diff_vector[eye].x,
+        DEVICE.diff_vector[eye].y,
+        DEVICE.glint_point[eye].x,
+        DEVICE.glint_point[eye].y,
+        DEVICE.glint_centroid[eye].x,
+        DEVICE.glint_centroid[eye].y,
         # -- data quality --------------------------------------------------------------
-        vpx_get_data_quality(EYE_A, DEVICE.data_quality["A"])
-        vpx_get_data_quality(EYE_B, DEVICE.data_quality["B"])
+        DEVICE.data_quality[eye].value,
         # -- timestamps ----------------------------------------------------------------
-        vpx_get_data_time(EYE_A, DEVICE.data_time["A"])
-        vpx_get_data_time(EYE_B, DEVICE.data_time["B"])
-        vpx_get_data_delta_time(EYE_A, DEVICE.data_delta_time["A"])
-        vpx_get_data_delta_time(EYE_B, DEVICE.data_delta_time["B"])
-        vpx_get_store_time(EYE_A, DEVICE.store_time["A"])
-        vpx_get_store_time(EYE_A, DEVICE.store_time["B"])
-        vpx_get_store_delta_time(EYE_A, DEVICE.store_delta_time["A"])
-        vpx_get_store_delta_time(EYE_B, DEVICE.store_delta_time["B"])
+        DEVICE.data_time[eye].value,
+        DEVICE.data_delta_time[eye].value,
+        DEVICE.store_time[eye].value,
+        DEVICE.store_delta_time[eye].value,
+    ]
+    if eye == "A":
+        data += [
+            DEVICE.gaze_point_binocular.x,
+            DEVICE.gaze_point_binocular.y,
+            DEVICE.velocity_binocular.value,
+        ]
 
-        # figure out the corresponding LSL timestamp
-        acquisition_time = DEVICE.store_time["A"]  # same for A and B
-        current_time = VPX.VPX_GetPrecisionDeltaTime(None, c_int(0))
-
-        # format the data selection into a numpy array
-        data = np.array(
-            [
-                # -- gaze raw ----------------------------------------------------------
-                DEVICE.gaze_point["A"].x,
-                DEVICE.gaze_point["A"].y,
-                DEVICE.gaze_point["B"].x,
-                DEVICE.gaze_point["B"].y,
-                DEVICE.gaze_angle["A"].x,
-                DEVICE.gaze_angle["A"].y,
-                DEVICE.gaze_angle["B"].x,
-                DEVICE.gaze_angle["B"].y,
-                # -- gaze smoothed -----------------------------------------------------
-                DEVICE.gaze_point_smoothed["A"].x,
-                DEVICE.gaze_point_smoothed["A"].y,
-                DEVICE.gaze_point_smoothed["B"].x,
-                DEVICE.gaze_point_smoothed["B"].y,
-                DEVICE.gaze_angle_smoothed["A"].x,
-                DEVICE.gaze_angle_smoothed["A"].y,
-                DEVICE.gaze_angle_smoothed["B"].x,
-                DEVICE.gaze_angle_smoothed["B"].y,
-                # -- gaze corrected ----------------------------------------------------
-                DEVICE.gaze_point_corrected["A"].x,
-                DEVICE.gaze_point_corrected["A"].y,
-                DEVICE.gaze_point_corrected["B"].x,
-                DEVICE.gaze_point_corrected["B"].y,
-                DEVICE.gaze_angle_corrected["A"].x,
-                DEVICE.gaze_angle_corrected["A"].y,
-                DEVICE.gaze_angle_corrected["B"].x,
-                DEVICE.gaze_angle_corrected["B"].y,
-                # -- gaze binocular ----------------------------------------------------
-                DEVICE.gaze_point_binocular.x,
-                DEVICE.gaze_point_binocular.y,
-                # -- velocity ----------------------------------------------------------
-                DEVICE.total_velocity["A"].value,
-                DEVICE.total_velocity["B"].value,
-                DEVICE.component_velocity["A"].x,
-                DEVICE.component_velocity["A"].y,
-                DEVICE.component_velocity["B"].x,
-                DEVICE.component_velocity["B"].y,
-                DEVICE.velocity_binocular.value,
-                # -- pupil -------------------------------------------------------------
-                DEVICE.pupil_size["A"].x,
-                DEVICE.pupil_size["A"].y,
-                DEVICE.pupil_size["B"].x,
-                DEVICE.pupil_size["B"].y,
-                DEVICE.pupil_aspect_ratio["A"].value,
-                DEVICE.pupil_aspect_ratio["B"].value,
-                DEVICE.pupil_angle["A"].value,
-                DEVICE.pupil_angle["B"].value,
-                DEVICE.pupil_diameter["A"].value,
-                DEVICE.pupil_diameter["B"].value,
-                DEVICE.pupil_point["A"].x,
-                DEVICE.pupil_point["A"].y,
-                DEVICE.pupil_point["B"].x,
-                DEVICE.pupil_point["B"].y,
-                DEVICE.pupil_centroid["A"].x,
-                DEVICE.pupil_centroid["A"].y,
-                DEVICE.pupil_centroid["B"].x,
-                DEVICE.pupil_centroid["B"].y,
-                # -- glint -------------------------------------------------------------
-                DEVICE.diff_vector["A"].x,
-                DEVICE.diff_vector["A"].y,
-                DEVICE.diff_vector["B"].x,
-                DEVICE.diff_vector["B"].y,
-                DEVICE.glint_point["A"].x,
-                DEVICE.glint_point["A"].y,
-                DEVICE.glint_point["B"].x,
-                DEVICE.glint_point["B"].y,
-                DEVICE.glint_centroid["A"].x,
-                DEVICE.glint_centroid["A"].y,
-                DEVICE.glint_centroid["B"].x,
-                DEVICE.glint_centroid["B"].y,
-                # -- data quality ------------------------------------------------------
-                DEVICE.data_quality["A"].value,
-                DEVICE.data_quality["B"].value,
-                # -- timestamps --------------------------------------------------------
-                DEVICE.data_time["A"].value,
-                DEVICE.data_time["B"].value,
-                DEVICE.data_delta_time["A"].value,
-                DEVICE.data_delta_time["B"].value,
-                DEVICE.store_time["A"].value,
-                DEVICE.store_time["B"].value,
-                DEVICE.store_delta_time["A"].value,
-                DEVICE.store_delta_time["B"].value,
-                # -- temp --------------------------------------------------------------
-                current_time,
-            ],
-            dtype=fmt2numpy[_OUTLET._dtype],
-        )
-        logger.debug("%s", data)
-        _OUTLET.push_sample(data, timestamp=0)
+    data = np.array(data, dtype=fmt2numpy[_OUTLETS[eye]._dtype])
+    _OUTLETS[eye].push_sample(data, timestamp=timestamp)
     return 0  # exit code
 
 
