@@ -58,4 +58,4 @@ class Buffer:
     @property
     def is_full(self) -> bool:
         """True if the buffer is full."""
-        return self._idx == self.bufsize - 1
+        return self._idx == self.bufsize
