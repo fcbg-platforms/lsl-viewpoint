@@ -20,12 +20,6 @@ from .device import (
 from .lsl import StreamInfo
 from .utils.logs import logger
 
-_func_double_value = CFUNCTYPE(c_int, POINTER(c_double))
-_func_double_value2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(c_double))
-_func_real_point = CFUNCTYPE(c_int, POINTER(_RealPoint))
-_func_real_point2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(_RealPoint))
-_func_real_rect2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(_RealRect))
-
 if _LIB_PATH is None or _SAMPLING_RATE is None:
     raise RuntimeError(
         "The path to the DLL or the sampling rate is unknown. Please use "
@@ -66,6 +60,12 @@ VPX.VPX_GetPrecisionDeltaTime.restype = c_double
 VPX.VPX_GetPrecisionDeltaTime.argtypes = [POINTER(c_void_p), c_int]
 
 # -- accessor functions ----------------------------------------------------------------
+_func_double_value = CFUNCTYPE(c_int, POINTER(c_double))
+_func_double_value2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(c_double))
+_func_real_point = CFUNCTYPE(c_int, POINTER(_RealPoint))
+_func_real_point2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(_RealPoint))
+_func_real_rect2 = CFUNCTYPE(c_int, _VPX_EyeType, POINTER(_RealRect))
+
 # gaze point
 vpx_get_gaze_point = _func_real_point2(VPX.VPX_GetGazePoint2)
 vpx_get_gaze_point_smoothed = _func_real_point2(VPX.VPX_GetGazePointSmoothed2)
