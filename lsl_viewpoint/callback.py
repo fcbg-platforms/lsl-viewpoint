@@ -1,6 +1,6 @@
 from __future__ import annotations  # post-poned evaluation of annotations
 
-from ctypes import CDLL, CFUNCTYPE, POINTER, c_double, c_int, c_bool, c_void_p
+from ctypes import CDLL, CFUNCTYPE, POINTER, c_bool, c_double, c_int, c_void_p
 
 import numpy as np
 from bsl.lsl import StreamInfo, StreamOutlet, local_clock
@@ -8,14 +8,14 @@ from bsl.lsl.constants import fmt2numpy
 
 from . import _LIB_PATH, _SAMPLING_RATE
 from .device import (
+    EYE_A,
+    EYE_B,
+    VPX_DAT_FRESH,
     ViewPointDevice,
     _RealPoint,
     _RealRect,
     _VPX_DataQuality,
     _VPX_EyeType,
-    EYE_A,
-    EYE_B,
-    VPX_DAT_FRESH,
 )
 from .utils.logs import logger
 
