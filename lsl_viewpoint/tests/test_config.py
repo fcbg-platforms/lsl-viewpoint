@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from lsl_viewpoint import logger, set_log_level, load_config, write_config
+from lsl_viewpoint import load_config, logger, set_log_level, write_config
 
 if TYPE_CHECKING:
     from typing import Callable
