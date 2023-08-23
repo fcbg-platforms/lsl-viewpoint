@@ -1,6 +1,6 @@
 from __future__ import annotations  # post-poned evaluation of annotations
 
-from ctypes import CDLL, CFUNCTYPE, POINTER, c_double, c_int, c_bool
+from ctypes import CDLL, CFUNCTYPE, POINTER, c_double, c_int, c_bool, c_void_p
 
 import numpy as np
 from bsl.lsl import StreamInfo, StreamOutlet, local_clock
@@ -60,9 +60,9 @@ logger.info("ViewPoint DLL version is %s.", VPX.VPX_GetDLLVersion())
 VPX.VPX_IsPrecisionDeltaTimeAvailableQ.restype = c_bool
 if not VPX.VPX_IsPrecisionDeltaTimeAvailableQ():
     raise RuntimeError("Precision timestamps are not available.")
-# equivalent to CFUNCTYPE(c_double, POINTER(c_double), c_int)
+# equivalent to CFUNCTYPE(c_double, POINTER(c_void_p), c_int)
 VPX.VPX_GetPrecisionDeltaTime.restype = c_double
-VPX.VPX_GetPrecisionDeltaTime.argtypes = [POINTER(c_double), c_int]
+VPX.VPX_GetPrecisionDeltaTime.argtypes = [POINTER(c_void_p), c_int]
 
 # -- accessor functions ----------------------------------------------------------------
 # gaze point
@@ -310,7 +310,7 @@ _CH_NAMES = [
     "store_delta_time_A",
     "store_delta_time_B",
     # -- temp --------------------------------------------------------------------------
-    "delta"
+    "current_time"
 ]
 
 # -- LSL Stream ------------------------------------------------------------------------
@@ -393,7 +393,7 @@ def callback(msg, sub_msg, p1, p2):  # noqa: D401
 
         # figure out the corresponding LSL timestamp
         acquisition_time = DEVICE.store_time["A"]  # same for A and B
-        delta_time = VPX.VPX_GetPrecisionDeltaTime(acquisition_time, c_int(0))
+        current_time = VPX.VPX_GetPrecisionDeltaTime(None, c_int(0))
 
         # format the data selection into a numpy array
         data = np.array(
@@ -481,7 +481,7 @@ def callback(msg, sub_msg, p1, p2):  # noqa: D401
                 DEVICE.store_delta_time["A"].value,
                 DEVICE.store_delta_time["B"].value,
                 # -- temp --------------------------------------------------------------
-                delta_time,
+                current_time,
             ],
             dtype=fmt2numpy[_OUTLET._dtype],
         )
