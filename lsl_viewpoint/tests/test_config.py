@@ -1,13 +1,6 @@
-from __future__ import annotations  # post-poned evaluation of annotations
-
-from typing import TYPE_CHECKING
-
 import pytest
 
 from lsl_viewpoint import load_config, logger, set_log_level, write_config
-
-if TYPE_CHECKING:
-    pass
 
 logger.propagate = True
 set_log_level("WARNING")
