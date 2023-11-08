@@ -3,8 +3,8 @@ from __future__ import annotations  # post-poned evaluation of annotations
 from ctypes import CDLL, CFUNCTYPE, POINTER, c_bool, c_double, c_int, c_void_p
 
 import numpy as np
-from bsl.lsl import StreamOutlet, local_clock
-from bsl.lsl.constants import fmt2numpy
+from mne_lsl.lsl import StreamInfo, StreamOutlet, local_clock
+from mne_lsl.lsl.constants import fmt2numpy
 
 from . import _LIB_PATH, _SAMPLING_RATE
 from .device import (
@@ -17,7 +17,6 @@ from .device import (
     _VPX_DataQuality,
     _VPX_EyeType,
 )
-from .lsl import StreamInfo
 from .utils.logs import logger
 
 if _LIB_PATH is None or _SAMPLING_RATE is None:

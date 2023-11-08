@@ -17,7 +17,7 @@ classifiers = [
   'Programming Language :: Python :: 3.9',
 ]
 dependencies = [
-  'bsl==0.6.3',
+  'mne-lsl',
   'numpy>=1.21',
   'packaging',
   'psutil',
