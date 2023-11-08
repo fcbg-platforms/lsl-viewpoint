@@ -36,7 +36,7 @@ maintainers = [
 name = 'lsl_viewpoint'
 readme = 'README.md'
 requires-python = '>=3.9'
-version = '0.2.0.dev'
+version = '0.2.0'
 
 [project.optional-dependencies]
 all = [
