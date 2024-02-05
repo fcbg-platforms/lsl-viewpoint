@@ -1,7 +1,6 @@
 """Test logs.py"""
 
 import logging
-from typing import Optional, Union
 
 import pytest
 
@@ -68,7 +67,7 @@ def test_verbose(caplog):
 
     # function
     @verbose
-    def foo(verbose: Optional[Union[bool, str, int]] = None):
+    def foo(verbose: bool | str | int | None = None):
         """Foo function."""
         logger.debug("101")
 
@@ -95,12 +94,12 @@ def test_verbose(caplog):
             pass
 
         @verbose
-        def foo(self, verbose: Optional[Union[bool, str, int]] = None):
+        def foo(self, verbose: bool | str | int | None = None):
             logger.debug("101")
 
         @staticmethod
         @verbose
-        def foo2(verbose: Optional[Union[bool, str, int]] = None):
+        def foo2(verbose: bool | str | int | None = None):
             logger.debug("101")
 
     foo = Foo()
@@ -133,7 +132,7 @@ def test_file_handler(tmp_path):
 
     logger.handlers[-1].close()
 
-    with open(fname, mode="r") as file:
+    with open(fname) as file:
         lines = file.readlines()
 
     assert len(lines) == 2
