@@ -4,7 +4,7 @@ from ctypes import Structure, c_double, c_float, c_int
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Dict
+    from typing import dict
 
 
 _VPX_EyeType = c_int
@@ -177,15 +177,15 @@ class ViewPointDevice:
         self._store_delta_time = {"A": c_double(0.0), "B": c_double(0.0)}
 
     @property
-    def gaze_point(self) -> Dict[str, _RealPoint]:
+    def gaze_point(self) -> dict[str, _RealPoint]:
         return self._gaze_point
 
     @property
-    def gaze_point_smoothed(self) -> Dict[str, _RealPoint]:
+    def gaze_point_smoothed(self) -> dict[str, _RealPoint]:
         return self._gaze_point_smoothed
 
     @property
-    def gaze_point_corrected(self) -> Dict[str, _RealPoint]:
+    def gaze_point_corrected(self) -> dict[str, _RealPoint]:
         return self._gaze_point_corrected
 
     @property
@@ -193,23 +193,23 @@ class ViewPointDevice:
         return self._gaze_point_binocular
 
     @property
-    def gaze_angle(self) -> Dict[str, _RealPoint]:
+    def gaze_angle(self) -> dict[str, _RealPoint]:
         return self._gaze_angle
 
     @property
-    def gaze_angle_smoothed(self) -> Dict[str, _RealPoint]:
+    def gaze_angle_smoothed(self) -> dict[str, _RealPoint]:
         return self._gaze_angle_smoothed
 
     @property
-    def gaze_angle_corrected(self) -> Dict[str, _RealPoint]:
+    def gaze_angle_corrected(self) -> dict[str, _RealPoint]:
         return self._gaze_angle_corrected
 
     @property
-    def total_velocity(self) -> Dict[str, c_double]:
+    def total_velocity(self) -> dict[str, c_double]:
         return self._total_velocity
 
     @property
-    def component_velocity(self) -> Dict[str, _RealPoint]:
+    def component_velocity(self) -> dict[str, _RealPoint]:
         return self._component_velocity
 
     @property
@@ -217,61 +217,61 @@ class ViewPointDevice:
         return self._velocity_binocular
 
     @property
-    def pupil_size(self) -> Dict[str, _RealPoint]:
+    def pupil_size(self) -> dict[str, _RealPoint]:
         return self._pupil_size
 
     @property
-    def pupil_aspect_ratio(self) -> Dict[str, c_double]:
+    def pupil_aspect_ratio(self) -> dict[str, c_double]:
         return self._pupil_aspect_ratio
 
     @property
-    def pupil_oval_rect(self) -> Dict[str, _RealRect]:
+    def pupil_oval_rect(self) -> dict[str, _RealRect]:
         return self._pupil_oval_rect
 
     @property
-    def pupil_angle(self) -> Dict[str, c_double]:
+    def pupil_angle(self) -> dict[str, c_double]:
         return self._pupil_angle
 
     @property
-    def pupil_diameter(self) -> Dict[str, c_double]:
+    def pupil_diameter(self) -> dict[str, c_double]:
         return self._pupil_diameter
 
     @property
-    def pupil_point(self) -> Dict[str, _RealPoint]:
+    def pupil_point(self) -> dict[str, _RealPoint]:
         return self._pupil_point
 
     @property
-    def pupil_centroid(self) -> Dict[str, _RealPoint]:
+    def pupil_centroid(self) -> dict[str, _RealPoint]:
         return self._pupil_centroid
 
     @property
-    def diff_vector(self) -> Dict[str, _RealPoint]:
+    def diff_vector(self) -> dict[str, _RealPoint]:
         return self._diff_vector
 
     @property
-    def glint_point(self) -> Dict[str, _RealPoint]:
+    def glint_point(self) -> dict[str, _RealPoint]:
         return self._glint_point
 
     @property
-    def glint_centroid(self) -> Dict[str, _RealPoint]:
+    def glint_centroid(self) -> dict[str, _RealPoint]:
         return self._glint_centroid
 
     @property
-    def data_quality(self) -> Dict[str, c_int]:
+    def data_quality(self) -> dict[str, c_int]:
         return self._data_quality
 
     @property
-    def data_time(self) -> Dict[str, c_double]:
+    def data_time(self) -> dict[str, c_double]:
         return self._data_time
 
     @property
-    def data_delta_time(self) -> Dict[str, c_double]:
+    def data_delta_time(self) -> dict[str, c_double]:
         return self._data_delta_time
 
     @property
-    def store_time(self) -> Dict[str, c_double]:
+    def store_time(self) -> dict[str, c_double]:
         return self._store_time
 
     @property
-    def store_delta_time(self) -> Dict[str, c_double]:
+    def store_delta_time(self) -> dict[str, c_double]:
         return self._store_delta_time

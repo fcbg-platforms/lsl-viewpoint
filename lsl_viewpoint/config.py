@@ -1,19 +1,15 @@
-from __future__ import annotations  # post-poned evaluation of annotations
-
 from configparser import ConfigParser
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from .utils._checks import check_type, ensure_path
 from .utils.logs import logger
 
-if TYPE_CHECKING:
-    from typing import Optional, Tuple, Union
+_DEFAULT_CONFIG: Path = Path.home() / ".lsl-viewpoint"
 
 
 def load_config(
-    fname: Union[str, Path] = Path.home() / ".lsl-viewpoint"
-) -> Tuple[Optional[str], Optional[float]]:
+    fname: str | Path = _DEFAULT_CONFIG,
+) -> tuple[str | None, float | None]:
     """Load a configuration file with the path to 'VPX_InterApp_64.dll'."""
     fname = ensure_path(fname, must_exist=False)
     if not fname.exists():
@@ -32,9 +28,9 @@ def load_config(
 
 
 def write_config(
-    path: Union[str, Path],
+    path: str | Path,
     sfreq: float,
-    fname: Union[str, Path] = Path.home() / ".lsl-viewpoint",
+    fname: str | Path = _DEFAULT_CONFIG,
 ) -> None:
     """Write a configuration file with the path to 'VPX_InterApp_64.dll'."""
     path = ensure_path(path, must_exist=True)

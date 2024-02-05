@@ -5,14 +5,14 @@ import operator
 import os
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
 from ._docs import fill_doc
 
 
-def ensure_int(item: Any, item_name: Optional[str] = None) -> int:
+def ensure_int(item: Any, item_name: str | None = None) -> int:
     """Ensure a variable is an integer.
 
     Parameters
@@ -68,7 +68,7 @@ _types = {
 }
 
 
-def check_type(item: Any, types: tuple, item_name: Optional[str] = None) -> None:
+def check_type(item: Any, types: tuple, item_name: str | None = None) -> None:
     """Check that item is an instance of types.
 
     Parameters
@@ -128,8 +128,8 @@ def check_type(item: Any, types: tuple, item_name: Optional[str] = None) -> None
 def check_value(
     item: Any,
     allowed_values: tuple,
-    item_name: Optional[str] = None,
-    extra: Optional[str] = None,
+    item_name: str | None = None,
+    extra: str | None = None,
 ) -> None:
     """Check the value of a parameter against a list of valid options.
 
@@ -160,9 +160,9 @@ def check_value(
         if len(allowed_values) == 1:
             options = "The only allowed value is %s" % repr(allowed_values[0])
         elif len(allowed_values) == 2:
-            options = "Allowed values are %s and %s" % (
-                repr(allowed_values[0]),
-                repr(allowed_values[1]),
+            options = (
+                f"Allowed values are {repr(allowed_values[0])} "
+                f"and {repr(allowed_values[1])}"
             )
         else:
             options = "Allowed values are "
