@@ -9,7 +9,7 @@ repos:
             files: lsl_viewpoint
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.1.14
+      rev: v0.3.5
       hooks:
           - id: ruff
             name: ruff linter
@@ -47,7 +47,7 @@ repos:
             files: pyproject.toml
 
     - repo: https://github.com/adrienverge/yamllint
-      rev: v1.33.0
+      rev: v1.35.1
       hooks:
           - id: yamllint
             args: [--strict, -c, .yamllint.yaml]
