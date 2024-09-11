@@ -69,10 +69,10 @@ lsl_viewpoint = 'lsl_viewpoint.commands.lsl_viewpoint:run'
 lsl_viewpoint-sys_info = 'lsl_viewpoint.commands.sys_info:run'
 
 [project.urls]
-documentation = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
-homepage = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
-source = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint'
-tracker = 'https://github.com/fcbg-hnp-meeg/lsl-viewpoint/issues'
+documentation = 'https://github.com/fcbg-platforms/lsl-viewpoint'
+homepage = 'https://github.com/fcbg-platforms/lsl-viewpoint'
+source = 'https://github.com/fcbg-platforms/lsl-viewpoint'
+tracker = 'https://github.com/fcbg-platforms/lsl-viewpoint/issues'
 
 [tool.codespell]
 check-filenames = true

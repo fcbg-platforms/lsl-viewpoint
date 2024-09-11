@@ -12,7 +12,7 @@ def test_load_config():
 
     cfg = files("lsl_viewpoint.tests") / "data" / "lsl-viewpoint-valid"
     path, sfreq = load_config(cfg)
-    assert path == "/home/fcbg-hnp-meeg/VPX_InterApp_64.dll"
+    assert path == "/home/fcbg-platforms/VPX_InterApp_64.dll"
     assert sfreq == 60
 
 

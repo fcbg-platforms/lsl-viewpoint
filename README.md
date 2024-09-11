@@ -1,7 +1,8 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
-[![tests](https://github.com/fcbg-hnp-meeg/lsl-viewpoint/actions/workflows/pytest.yaml/badge.svg?branch=main)](https://github.com/fcbg-hnp-meeg/lsl-viewpoint/actions/workflows/pytest.yaml)
+[![codecov](https://codecov.io/gh/fcbg-platforms/lsl-viewpoint/graph/badge.svg?token=jqM1JqeXVk)](https://codecov.io/gh/fcbg-platforms/lsl-viewpoint)
+[![tests](https://github.com/fcbg-platforms/lsl-viewpoint/actions/workflows/pytest.yaml/badge.svg?branch=main)](https://github.com/fcbg-platforms/lsl-viewpoint/actions/workflows/pytest.yaml)
 
 # LSL ViewPoint
 
@@ -13,7 +14,7 @@ Designed for x64 bits windows systems only.
 This LSL application is a python package. It can be installed with `pip` from source:
 
 ```
-pip install git+https://github.com/fcbg-hnp-meeg/lsl-viewpoint
+pip install git+https://github.com/fcbg-platforms/lsl-viewpoint
 ```
 
 ## Configuration
