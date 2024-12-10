@@ -24,10 +24,8 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install liblsl (linux)
@@ -56,12 +54,9 @@ jobs:
         run: |
           python -m pip install --progress-bar off --upgrade pip setuptools
           python -m pip install --progress-bar off .[test]
-      - name: Display system information
-        run: lsl_viewpoint-sys_info --developer
-      - name: Run pytest
-        run: pytest lsl_viewpoint --cov=lsl_viewpoint --cov-report=xml --cov-config=pyproject.toml
-      - name: Upload to codecov
-        uses: codecov/codecov-action@v5
+      - run: lsl_viewpoint-sys_info --developer
+      - run: pytest lsl_viewpoint --cov=lsl_viewpoint --cov-report=xml --cov-config=pyproject.toml
+      - uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
           flags: unittests  # optional
@@ -77,14 +72,9 @@ jobs:
         python-version: ["3.11"]
     name: pip pre-release - py${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install liblsl
@@ -93,17 +83,13 @@ jobs:
           sudo apt update
           sudo apt install -y libpugixml-dev qtbase5-dev qt5-qmake
           sudo apt install -y ./liblsl-1.16.2-jammy_amd64.deb
-      - name: Install dependencies
-        run: |
+      - run: |
           python -m pip install --progress-bar off --upgrade pip setuptools
           python -m pip install --progress-bar off .[test]
           python -m pip install --progress-bar off --upgrade --pre --only-binary :all: -i https://pypi.anaconda.org/scientific-python-nightly-wheels/simple --timeout=180 numpy
-      - name: Display system information
-        run: lsl_viewpoint-sys_info --developer
-      - name: Run pytest
-        run: pytest lsl_viewpoint --cov=lsl_viewpoint --cov-report=xml --cov-config=pyproject.toml
-      - name: Upload to codecov
-        uses: codecov/codecov-action@v5
+      - run: lsl_viewpoint-sys_info --developer
+      - run: pytest lsl_viewpoint --cov=lsl_viewpoint --cov-report=xml --cov-config=pyproject.toml
+      - uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
           flags: unittests  # optional
